@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  // Primary Blue
-  static const Color primary = Color(0xFF0B63E5);
-  static const Color primaryLight = Color(0xFF2C8BFF);
-  static const Color primaryDark = Color(0xFF0A4FBF);
-  static const Color primarySurface = Color(0xFFE8F1FD);
-  static const Color primaryBorder = Color(0xFFB8D0F7);
+  // Primary Purple
+  static const Color primary = Color(0xFF5448D6);
+  static const Color primaryLight = Color(0xFF8A82E7);
+  static const Color primaryDark = Color(0xFF1708BB);
+  static const Color primaryDeep = Color(0xFF0C0093);
+  static const Color primaryDarker = Color(0xFF080060);
+  static const Color primaryDarkest = Color(0xFF030026);
+  static const Color primarySurface = Color(0xFFF6F5FF);
+  static const Color primaryBorder = Color(0xFFD3D0F8);
 
   // Semantic
   static const Color green = Color(0xFF16A571);
@@ -15,8 +18,8 @@ class AppColors {
   static const Color amberSurface = Color(0xFFFDF3E3);
   static const Color red = Color(0xFFE5484D);
   static const Color redSurface = Color(0xFFFDECED);
-  static const Color violet = Color(0xFF7A5AF8);
-  static const Color violetSurface = Color(0xFFF0EEFF);
+  static const Color violet = Color(0xFF8A82E7);
+  static const Color violetSurface = Color(0xFFE8E6FC);
 
   // Neutral
   static const Color ink = Color(0xFF0E1726);
@@ -26,15 +29,22 @@ class AppColors {
   static const Color slate300 = Color(0xFFCBD2DD);
   static const Color line = Color(0xFFE8ECF2);
   static const Color line2 = Color(0xFFF3F5F8);
-  static const Color bg = Color(0xFFF6F7F9);
+  static const Color bg = Color(0xFFF6F5FF);
   static const Color white = Color(0xFFFFFFFF);
 
-  // Gradient
+  // Gradient splash
   static const LinearGradient primaryGradient = LinearGradient(
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    stops: [0.0, 0.5, 1.0],
+    colors: [primaryDark, primary, primaryLight],
+  );
+
+  // Gradient card
+  static const LinearGradient cardGradient = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
-    stops: [0.0, 0.55, 1.0],
-    colors: [primaryLight, primary, primaryDark],
+    colors: [primaryDeep, primaryDark],
   );
 
   // Shadows
@@ -56,14 +66,13 @@ class AppColors {
   ];
   static List<BoxShadow> shadowPrimary = [
     BoxShadow(
-      color: Color(0x520B63E5),
+      color: Color(0x525448D6),
       blurRadius: 22,
       spreadRadius: 0,
       offset: Offset(0, 10),
     ),
   ];
 
-  // Tone map for FeatureIcon
   static Map<String, List<Color>> tones = {
     'blue': [primarySurface, primary],
     'green': [greenSurface, green],
