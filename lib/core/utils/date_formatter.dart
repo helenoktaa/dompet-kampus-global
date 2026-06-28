@@ -8,8 +8,8 @@ class DateFormatter {
     final date = DateTime(dt.year, dt.month, dt.day);
 
     final timeStr = DateFormat('HH.mm').format(dt);
-    if (date == today) return 'Hari ini, $timeStr';
-    if (date == yesterday) return 'Kemarin, $timeStr';
+    if (date == today) return 'Today, $timeStr';
+    if (date == yesterday) return 'Yesterday, $timeStr';
     return '${DateFormat('d MMM', 'id_ID').format(dt)}, $timeStr';
   }
 

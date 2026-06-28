@@ -7,7 +7,6 @@ import '../../../core/utils/currency_formatter.dart';
 import '../../../domain/entities/transaction_entity.dart';
 import '../../blocs/account/account_bloc.dart';
 import '../../blocs/auth/auth_bloc.dart';
-import '../../widgets/app_avatar.dart';
 import '../../widgets/app_logo.dart';
 import '../../widgets/feature_icon.dart';
 import '../../widgets/transaction_row.dart';
@@ -30,253 +29,294 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.bg,
+      body: BlocBuilder<AccountBloc, AccountState>(
+        builder: (context, accountState) {
+          final balance = accountState is AccountLoaded
+              ? accountState.account.balance
+              : 0.0;
+          final txns = accountState is AccountLoaded
+              ? accountState.transactions
+              : <TransactionEntity>[];
+          final loading = accountState is AccountLoading;
+
+          return RefreshIndicator(
+            onRefresh: () async =>
+                context.read<AccountBloc>().add(AccountRefreshRequested()),
+            color: AppColors.primary,
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildHeader(balance, loading),
+                  const SizedBox(height: 24),
+                  _buildFeatureGrid(),
+                  const SizedBox(height: 20),
+                  _buildPromoSection(),
+                  const SizedBox(height: 20),
+                  _buildDiscountBanner(),
+                  const SizedBox(height: 24),
+                  _buildTransactions(txns),
+                  const SizedBox(height: 32),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildHeader(double balance, bool loading) {
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, authState) {
         final user = authState is AuthAuthenticated ? authState.user : null;
         final firstName = user?.firstName ?? 'Kamu';
         final fullName = user?.name ?? 'User';
 
-        return Scaffold(
-          backgroundColor: AppColors.bg,
-          body: BlocBuilder<AccountBloc, AccountState>(
-            builder: (context, accountState) {
-              final balance = accountState is AccountLoaded ? accountState.account.balance : 0.0;
-              final txns =
-                  accountState is AccountLoaded ? accountState.transactions : <TransactionEntity>[];
-              final loading = accountState is AccountLoading;
-
-              return RefreshIndicator(
-                onRefresh: () async => context.read<AccountBloc>().add(AccountRefreshRequested()),
-                color: AppColors.primary,
-                child: SingleChildScrollView(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  child: Column(
-                    children: [
-                      // Gradient header
-                      Container(
-                        width: double.infinity,
-                        decoration: const BoxDecoration(
-                          gradient: AppColors.primaryGradient,
-                          borderRadius: BorderRadius.only(
-                            bottomLeft: Radius.circular(28),
-                            bottomRight: Radius.circular(28),
+        return Container(
+          decoration: const BoxDecoration(
+            gradient: AppColors.primaryGradient,
+            borderRadius: BorderRadius.only(
+              bottomLeft: Radius.circular(32),
+              bottomRight: Radius.circular(32),
+            ),
+          ),
+          padding: EdgeInsets.fromLTRB(
+              20, MediaQuery.of(context).padding.top + 16, 20, 28),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Top row: avatar + greeting + notif
+              Row(
+                children: [
+                  CircleAvatar(
+                    radius: 20,
+                    backgroundColor: Colors.white.withValues(alpha: 0.25),
+                    child: Text(
+                      fullName.isNotEmpty ? fullName[0].toUpperCase() : 'U',
+                      style: const TextStyle(
+                        fontFamily: 'PlusJakartaSans',
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Selamat siang,',
+                          style: TextStyle(
+                            fontFamily: 'PlusJakartaSans',
+                            fontSize: 12,
+                            color: Colors.white70,
                           ),
                         ),
-                        padding: EdgeInsets.fromLTRB(
-                            20, MediaQuery.of(context).padding.top + 12, 20, 94),
-                        child: Row(
-                          children: [
-                            AppAvatar(
-                                name: fullName,
-                                size: 44,
-                                bg: Colors.white.withValues(alpha: 0.25)),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text('Selamat siang,',
-                                      style: TextStyle(
-                                        fontFamily: 'PlusJakartaSans',
-                                        fontSize: 13,
-                                        color: Colors.white70,
-                                      )),
-                                  Text('$firstName ',
-                                      style: const TextStyle(
-                                        fontFamily: 'PlusJakartaSans',
-                                        fontSize: 17,
-                                        fontWeight: FontWeight.w800,
-                                        color: Colors.white,
-                                        letterSpacing: -0.2,
-                                      )),
-                                ],
-                              ),
-                            ),
-                            Stack(
-                              children: [
-                                Container(
-                                  width: 42,
-                                  height: 42,
-                                  decoration: BoxDecoration(
-                                    color: Colors.white.withValues(alpha: 0.18),
-                                    borderRadius: BorderRadius.circular(14),
-                                  ),
-                                  child: const Icon(Icons.notifications_outlined,
-                                      size: 21, color: Colors.white),
-                                ),
-                                Positioned(
-                                  top: 10,
-                                  right: 11,
-                                  child: Container(
-                                    width: 8,
-                                    height: 8,
-                                    decoration: BoxDecoration(
-                                      color: AppColors.amber,
-                                      shape: BoxShape.circle,
-                                      border: Border.all(color: Colors.white, width: 2),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
+                        Text(
+                          firstName,
+                          style: const TextStyle(
+                            fontFamily: 'PlusJakartaSans',
+                            fontSize: 15,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Stack(
+                    children: [
+                      Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Icon(Icons.notifications_outlined,
+                            size: 20, color: Colors.white),
+                      ),
+                      Positioned(
+                        top: 9,
+                        right: 10,
+                        child: Container(
+                          width: 7,
+                          height: 7,
+                          decoration: BoxDecoration(
+                            color: AppColors.amber,
+                            shape: BoxShape.circle,
+                            border: Border.all(color: Colors.white, width: 1.5),
+                          ),
                         ),
                       ),
-                      // Balance Card (overlaps the header's bottom edge)
-                      Transform.translate(
-                        offset: const Offset(0, -46),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: _buildBalanceCard(balance, loading),
-                        ),
-                      ),
-                      const SizedBox(height: 14),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: _buildPointsRow(),
-                      ),
-                      const SizedBox(height: 18),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: _buildFeatureGrid(),
-                      ),
-                      const SizedBox(height: 16),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: _buildDeeplinkBanner(),
-                      ),
-                      const SizedBox(height: 22),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: _buildTransactions(txns),
-                      ),
-                      const SizedBox(height: 24),
                     ],
                   ),
+                ],
+              ),
+              const SizedBox(height: 20),
+
+              // Balance label
+              const Text(
+                'Balance',
+                style: TextStyle(
+                  fontFamily: 'PlusJakartaSans',
+                  fontSize: 13,
+                  color: Colors.white70,
+                  fontWeight: FontWeight.w500,
                 ),
-              );
-            },
+              ),
+              const SizedBox(height: 6),
+
+              // Saldo
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const Icon(Icons.account_balance_wallet_outlined,
+                      color: Colors.white70, size: 18),
+                  const SizedBox(width: 8),
+                  Text(
+                    _hideBalance
+                        ? CurrencyFormatter.maskBalance()
+                        : CurrencyFormatter.format(balance),
+                    style: const TextStyle(
+                      fontFamily: 'PlusJakartaSans',
+                      fontSize: 28,
+                      fontWeight: FontWeight.w800,
+                      color: Colors.white,
+                      letterSpacing: -0.5,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  GestureDetector(
+                    onTap: () => setState(() => _hideBalance = !_hideBalance),
+                    child: Icon(
+                      _hideBalance
+                          ? Icons.visibility_off_outlined
+                          : Icons.visibility_outlined,
+                      size: 18,
+                      color: Colors.white60,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+
+              // Action row
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  _ActionButton(
+                    icon: Icons.qr_code_scanner_rounded,
+                    label: 'Scan',
+                    onTap: () => context.go('/payment'),
+                  ),
+                  _ActionButton(
+                    icon: Icons.add_circle_outline_rounded,
+                    label: 'Top up',
+                    onTap: () => context.go('/topup'),
+                  ),
+                  _ActionButton(
+                    icon: Icons.send_rounded,
+                    label: 'Send',
+                    onTap: () => context.go('/transfer'),
+                  ),
+                  _ActionButton(
+                    icon: Icons.south_rounded,
+                    label: 'Receive',
+                    onTap: () => context.go('/topup'),
+                  ),
+                ],
+              ),
+            ],
           ),
         );
       },
     );
   }
 
-  Widget _buildBalanceCard(double balance, bool loading) {
-    final actions = [
-      {'icon': Icons.north_rounded, 'label': 'Top Up', 'tone': 'blue', 'route': '/topup'},
-      {'icon': Icons.send_rounded, 'label': 'Transfer', 'tone': 'green', 'route': '/transfer'},
-      {'icon': Icons.qr_code_rounded, 'label': 'Bayar', 'tone': 'violet', 'route': '/payment'},
-      {'icon': Icons.south_rounded, 'label': 'Tarik', 'tone': 'amber', 'route': '/topup'},
+  Widget _buildFeatureGrid() {
+    final features = [
+      {'icon': Icons.bolt_outlined, 'label': 'PLN', 'tone': 'amber'},
+      {'icon': Icons.water_drop_outlined, 'label': 'PDAM', 'tone': 'blue'},
+      {'icon': Icons.wifi_rounded, 'label': 'Internet', 'tone': 'green'},
+      {
+        'icon': Icons.smartphone_outlined,
+        'label': 'Credits',
+        'tone': 'violet'
+      },
+      {
+        'icon': Icons.account_balance_wallet_outlined,
+        'label': 'Top up\nE-wallet',
+        'tone': 'blue'
+      },
+      {'icon': Icons.sports_esports_outlined, 'label': 'Game', 'tone': 'red'},
+      {
+        'icon': Icons.volunteer_activism_outlined,
+        'label': 'Zakat',
+        'tone': 'green'
+      },
+      {'icon': Icons.more_horiz_rounded, 'label': 'More', 'tone': 'slate'},
     ];
 
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(22),
-        boxShadow: AppColors.shadowCard,
-      ),
-      padding: const EdgeInsets.fromLTRB(18, 18, 18, 8),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Row(
-                children: [
-                  const AppLogo(size: 26),
-                  const SizedBox(width: 7),
-                  const Text('Saldo DKG',
-                      style: TextStyle(
-                        fontFamily: 'PlusJakartaSans',
-                        fontSize: 13,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.slate500,
-                      )),
-                ],
-              ),
-              const Spacer(),
-              GestureDetector(
-                onTap: () => context.go('/topup'),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: AppColors.primarySurface,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: const Row(
-                    children: [
-                      Icon(Icons.add_rounded, size: 15, color: AppColors.primary),
-                      SizedBox(width: 5),
-                      Text('Isi Saldo',
-                          style: TextStyle(
-                            fontFamily: 'PlusJakartaSans',
-                            color: AppColors.primary,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 13,
-                          )),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              Text(
-                _hideBalance ? CurrencyFormatter.maskBalance() : CurrencyFormatter.format(balance),
-                style: const TextStyle(
-                  fontFamily: 'PlusJakartaSans',
-                  fontSize: 30,
-                  fontWeight: FontWeight.w800,
-                  color: AppColors.ink,
-                  letterSpacing: -0.5,
-                ),
-              ),
-              const SizedBox(width: 10),
-              IconButton(
-                icon: Icon(_hideBalance ? Icons.visibility_off_outlined : Icons.visibility_outlined,
-                    size: 20, color: AppColors.slate400),
-                onPressed: () => setState(() => _hideBalance = !_hideBalance),
-                padding: const EdgeInsets.all(4),
-                constraints: const BoxConstraints(),
-              ),
-            ],
-          ),
-          Container(
-            margin: const EdgeInsets.only(top: 16),
-            decoration: const BoxDecoration(
-              border: Border(top: BorderSide(color: AppColors.line2)),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: AppColors.shadowSoft,
+        ),
+        padding: const EdgeInsets.fromLTRB(8, 12, 8, 12),
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: features
+                  .sublist(0, 4)
+                  .map((f) => _buildFeatureItem(f))
+                  .toList(),
             ),
-            child: Row(
-              children: actions.map((a) {
-                return Expanded(
-                  child: GestureDetector(
-                    onTap: () => context.go(a['route'] as String),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      child: Column(
-                        children: [
-                          FeatureIcon(
-                            icon: a['icon'] as IconData,
-                            tone: a['tone'] as String,
-                            size: 46,
-                            iconSize: 22,
-                          ),
-                          const SizedBox(height: 7),
-                          Text(a['label'] as String,
-                              style: const TextStyle(
-                                fontFamily: 'PlusJakartaSans',
-                                fontSize: 12,
-                                fontWeight: FontWeight.w700,
-                                color: AppColors.slate600,
-                              )),
-                        ],
-                      ),
-                    ),
-                  ),
-                );
-              }).toList(),
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: features
+                  .sublist(4, 8)
+                  .map((f) => _buildFeatureItem(f))
+                  .toList(),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFeatureItem(Map<String, dynamic> f) {
+    return SizedBox(
+      width: 72,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          FeatureIcon(
+            icon: f['icon'] as IconData,
+            tone: f['tone'] as String,
+            size: 50,
+            iconSize: 24,
+          ),
+          const SizedBox(height: 6),
+          Text(
+            f['label'] as String,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontFamily: 'PlusJakartaSans',
+              fontSize: 11.5,
+              fontWeight: FontWeight.w600,
+              color: AppColors.slate600,
             ),
           ),
         ],
@@ -284,193 +324,139 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildPointsRow() {
-    return Row(
-      children: [
-        Expanded(
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: AppColors.shadowSoft,
-            ),
-            child: Row(
-              children: [
-                const FeatureIcon(
-                    icon: Icons.star_outline_rounded, tone: 'amber', size: 38, iconSize: 19),
-                const SizedBox(width: 10),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
-                    Text('Poin Kampus',
-                        style: TextStyle(
-                            fontFamily: 'PlusJakartaSans',
-                            fontSize: 11.5,
-                            color: AppColors.slate500,
-                            fontWeight: FontWeight.w600)),
-                    Text('1.250',
-                        style: TextStyle(
-                            fontFamily: 'PlusJakartaSans',
-                            fontSize: 15,
-                            fontWeight: FontWeight.w800,
-                            color: AppColors.ink)),
-                  ],
+  Widget _buildPromoSection() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Check New Promo',
+                style: TextStyle(
+                  fontFamily: 'PlusJakartaSans',
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.ink,
                 ),
-              ],
-            ),
-          ),
-        ),
-        const SizedBox(width: 10),
-        Expanded(
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: AppColors.shadowSoft,
-            ),
-            child: Row(
-              children: [
-                const FeatureIcon(
-                    icon: Icons.qr_code_rounded, tone: 'green', size: 38, iconSize: 19),
-                const SizedBox(width: 10),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
-                    Text('KTM Digital',
-                        style: TextStyle(
-                            fontFamily: 'PlusJakartaSans',
-                            fontSize: 11.5,
-                            color: AppColors.slate500,
-                            fontWeight: FontWeight.w600)),
-                    Text('Aktif',
-                        style: TextStyle(
-                            fontFamily: 'PlusJakartaSans',
-                            fontSize: 15,
-                            fontWeight: FontWeight.w800,
-                            color: AppColors.ink)),
-                  ],
+              ),
+              Text(
+                'Easy with promo code',
+                style: TextStyle(
+                  fontFamily: 'PlusJakartaSans',
+                  fontSize: 12,
+                  color: AppColors.slate400,
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildFeatureGrid() {
-    final features = [
-      {'icon': Icons.smartphone_outlined, 'label': 'Pulsa', 'tone': 'blue'},
-      {'icon': Icons.bolt_outlined, 'label': 'PLN', 'tone': 'amber'},
-      {'icon': Icons.restaurant_outlined, 'label': 'Kantin', 'tone': 'red'},
-      {'icon': Icons.receipt_long_outlined, 'label': 'UKT', 'tone': 'violet'},
-      {'icon': Icons.wifi_rounded, 'label': 'Paket Data', 'tone': 'green'},
-      {'icon': Icons.card_giftcard_rounded, 'label': 'Voucher', 'tone': 'red'},
-      {'icon': Icons.favorite_outline_rounded, 'label': 'Donasi', 'tone': 'amber'},
-      {'icon': Icons.more_horiz_rounded, 'label': 'Lainnya', 'tone': 'slate'},
-    ];
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: AppColors.shadowSoft,
-      ),
-      padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 8),
-      child: GridView.count(
-        crossAxisCount: 4,
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        mainAxisSpacing: 18,
-        crossAxisSpacing: 0,
-        children: features.map((f) {
-          return GestureDetector(
-            onTap: () {},
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                FeatureIcon(
-                    icon: f['icon'] as IconData, tone: f['tone'] as String, size: 50, iconSize: 24),
-                const SizedBox(height: 8),
-                Text(f['label'] as String,
-                    style: const TextStyle(
-                      fontFamily: 'PlusJakartaSans',
-                      fontSize: 11.8,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.slate600,
-                    )),
-              ],
-            ),
-          );
-        }).toList(),
-      ),
-    );
-  }
-
-  Widget _buildDeeplinkBanner() {
-    return GestureDetector(
-      onTap: () => context.go('/merchant'),
-      child: Container(
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xFF0E1726), Color(0xFF21314D)],
-          ),
-          borderRadius: BorderRadius.circular(20),
-        ),
-        padding: const EdgeInsets.all(16),
-        child: Stack(
-          clipBehavior: Clip.none,
-          children: [
-            Positioned(
-              right: -30,
-              top: -40,
-              child: Container(
-                width: 120,
-                height: 120,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: const Color(0xFF5B9BFF).withValues(alpha: 0.18),
+          GestureDetector(
+            onTap: () => context.go('/promo'),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                border: Border.all(color: AppColors.primaryBorder),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: const Text(
+                'VIEW ALL',
+                style: TextStyle(
+                  fontFamily: 'PlusJakartaSans',
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.primary,
                 ),
               ),
             ),
-            Row(
-              children: [
-                Container(
-                  width: 46,
-                  height: 46,
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(14),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDiscountBanner() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+            colors: [Color(0xFF5448D6), Color(0xFF8A82E7)],
+          ),
+          borderRadius: BorderRadius.circular(20),
+        ),
+        padding: const EdgeInsets.all(20),
+        child: Row(
+          children: [
+            // Ilustrasi placeholder
+            Container(
+              width: 80,
+              height: 80,
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: const Icon(Icons.person_outline_rounded,
+                  size: 44, color: Colors.white60),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'DISKON',
+                    style: TextStyle(
+                      fontFamily: 'PlusJakartaSans',
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white70,
+                      letterSpacing: 1,
+                    ),
                   ),
-                  child: const Icon(Icons.link_rounded, size: 24, color: Color(0xFF5B9BFF)),
-                ),
-                const SizedBox(width: 13),
-                const Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Coba bayar dari toko online',
-                          style: TextStyle(
-                            fontFamily: 'PlusJakartaSans',
-                            fontSize: 14.5,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.white,
-                          )),
-                      SizedBox(height: 2),
-                      Text('Simulasi checkout e-commerce → bayar via DKG',
-                          style: TextStyle(
-                            fontFamily: 'PlusJakartaSans',
-                            fontSize: 12.5,
-                            color: Colors.white70,
-                          )),
-                    ],
+                  const Text(
+                    '30%',
+                    style: TextStyle(
+                      fontFamily: 'PlusJakartaSans',
+                      fontSize: 36,
+                      fontWeight: FontWeight.w900,
+                      color: Colors.white,
+                      height: 1.1,
+                    ),
                   ),
-                ),
-                const Icon(Icons.chevron_right_rounded, size: 20, color: Colors.white60),
-              ],
+                  const SizedBox(height: 4),
+                  Text(
+                    'Data package payment',
+                    style: TextStyle(
+                      fontFamily: 'PlusJakartaSans',
+                      fontSize: 11,
+                      color: Colors.white.withValues(alpha: 0.75),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Text(
+                      'WALLTPAY30',
+                      style: TextStyle(
+                        fontFamily: 'PlusJakartaSans',
+                        fontSize: 12,
+                        fontWeight: FontWeight.w800,
+                        color: AppColors.primary,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -479,56 +465,112 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildTransactions(List<TransactionEntity> txns) {
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text('Transaksi terakhir',
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'Latest transaction',
                 style: TextStyle(
                   fontFamily: 'PlusJakartaSans',
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
                   color: AppColors.ink,
-                )),
-            GestureDetector(
-              onTap: () => context.go('/history'),
-              child: const Text('Lihat semua',
+                ),
+              ),
+              GestureDetector(
+                onTap: () => context.go('/history'),
+                child: const Text(
+                  'See all',
                   style: TextStyle(
                     fontFamily: 'PlusJakartaSans',
                     color: AppColors.primary,
                     fontWeight: FontWeight.w700,
                     fontSize: 13.5,
-                  )),
-            ),
-          ],
-        ),
-        const SizedBox(height: 13),
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: AppColors.shadowSoft,
-          ),
-          child: txns.isEmpty
-              ? const Padding(
-                  padding: EdgeInsets.all(20),
-                  child: Center(
-                    child: Text('Belum ada transaksi',
-                        style: TextStyle(color: AppColors.slate400, fontFamily: 'PlusJakartaSans')),
                   ),
-                )
-              : Column(
-                  children: txns
-                      .take(4)
-                      .toList()
-                      .asMap()
-                      .entries
-                      .map((e) => TransactionRow(txn: e.value, divider: e.key > 0))
-                      .toList(),
                 ),
-        ),
-      ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 13),
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: AppColors.shadowSoft,
+            ),
+            child: txns.isEmpty
+                ? const Padding(
+                    padding: EdgeInsets.all(24),
+                    child: Center(
+                      child: Text(
+                        'Belum ada transaksi',
+                        style: TextStyle(
+                          color: AppColors.slate400,
+                          fontFamily: 'PlusJakartaSans',
+                        ),
+                      ),
+                    ),
+                  )
+                : Column(
+                    children: txns
+                        .take(4)
+                        .toList()
+                        .asMap()
+                        .entries
+                        .map((e) =>
+                            TransactionRow(txn: e.value, divider: e.key > 0))
+                        .toList(),
+                  ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// Action button di header
+class _ActionButton extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+
+  const _ActionButton({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        children: [
+          Container(
+            width: 52,
+            height: 52,
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.18),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Icon(icon, color: Colors.white, size: 24),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            label,
+            style: const TextStyle(
+              fontFamily: 'PlusJakartaSans',
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: Colors.white,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

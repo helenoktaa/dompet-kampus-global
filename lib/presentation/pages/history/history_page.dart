@@ -32,7 +32,7 @@ class _HistoryPageState extends State<HistoryPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('Riwayat',
+                const Text('History',
                     style: TextStyle(
                       fontFamily: 'PlusJakartaSans',
                       fontSize: 22,
@@ -102,7 +102,7 @@ class _HistoryPageState extends State<HistoryPage> {
                               children: [
                                 const Padding(
                                   padding: EdgeInsets.only(left: 4, bottom: 10),
-                                  child: Text('Hari ini',
+                                  child: Text('Today',
                                       style: TextStyle(
                                         fontFamily: 'PlusJakartaSans',
                                         fontSize: 13,

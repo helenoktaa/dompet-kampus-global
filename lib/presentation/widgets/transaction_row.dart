@@ -95,8 +95,8 @@ class TransactionRow extends StatelessWidget {
     final time =
         '${dtWib.hour.toString().padLeft(2, '0')}.${dtWib.minute.toString().padLeft(2, '0')}';
 
-    if (date == today) return 'Hari ini, $time';
-    if (date == yesterday) return 'Kemarin, $time';
+    if (date == today) return 'Today, $time';
+    if (date == yesterday) return 'Yesterday, $time';
     return '${dtWib.day} ${_month(dtWib.month)}, $time';
   }
 

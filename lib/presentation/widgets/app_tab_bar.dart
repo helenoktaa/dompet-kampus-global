@@ -33,7 +33,7 @@ class AppTabBar extends StatelessWidget {
         child: Row(
           children: [
             _TabItem(icon: DkgIcons.home, label: 'Home', tabKey: 'home', active: active, onTap: onTab),
-            _TabItem(icon: DkgIcons.history, label: 'Riwayat', tabKey: 'history', active: active, onTap: onTab),
+            _TabItem(icon: DkgIcons.history, label: 'History', tabKey: 'history', active: active, onTap: onTab),
             // Center scan button
             Expanded(
               child: Center(
@@ -52,8 +52,8 @@ class AppTabBar extends StatelessWidget {
                 ),
               ),
             ),
-            _TabItem(icon: DkgIcons.gift, label: 'Promo', tabKey: 'promo', active: active, onTap: onTab),
-            _TabItem(icon: DkgIcons.user, label: 'Akun', tabKey: 'akun', active: active, onTap: onTab),
+            _TabItem(icon: DkgIcons.gift, label: 'Deals', tabKey: 'promo', active: active, onTap: onTab),
+            _TabItem(icon: DkgIcons.user, label: 'Profile', tabKey: 'akun', active: active, onTap: onTab),
           ],
         ),
       ),
