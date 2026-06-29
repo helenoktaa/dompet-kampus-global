@@ -245,14 +245,10 @@ class _HomePageState extends State<HomePage> {
       {'icon': Icons.bolt_outlined, 'label': 'PLN', 'tone': 'amber'},
       {'icon': Icons.water_drop_outlined, 'label': 'PDAM', 'tone': 'blue'},
       {'icon': Icons.wifi_rounded, 'label': 'Internet', 'tone': 'green'},
-      {
-        'icon': Icons.smartphone_outlined,
-        'label': 'Credits',
-        'tone': 'violet'
-      },
+      {'icon': Icons.smartphone_outlined, 'label': 'Credits', 'tone': 'violet'},
       {
         'icon': Icons.account_balance_wallet_outlined,
-        'label': 'Top up\nE-wallet',
+        'label': 'Top up',
         'tone': 'blue'
       },
       {'icon': Icons.sports_esports_outlined, 'label': 'Game', 'tone': 'red'},
@@ -392,23 +388,22 @@ class _HomePageState extends State<HomePage> {
         child: Row(
           children: [
             // Ilustrasi placeholder
-            Container(
-              width: 80,
-              height: 80,
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(16),
+            SizedBox(
+              width: 150,
+              height: 80, 
+              child: Image.asset(
+                'assets/images/banner.png',
+                fit: BoxFit.contain,
+                alignment: Alignment.bottomCenter,
               ),
-              child: const Icon(Icons.person_outline_rounded,
-                  size: 44, color: Colors.white60),
             ),
-            const SizedBox(width: 16),
+            const SizedBox(width: 10),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    'DISKON',
+                    'DISCOUNT',
                     style: TextStyle(
                       fontFamily: 'PlusJakartaSans',
                       fontSize: 13,

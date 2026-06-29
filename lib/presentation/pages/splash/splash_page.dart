@@ -17,8 +17,10 @@ class _SplashPageState extends State<SplashPage> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(seconds: 3), () {
-      if (mounted) context.read<AuthBloc>().add(AuthCheckRequested());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Future.delayed(const Duration(seconds: 3), () {
+        if (mounted) context.read<AuthBloc>().add(AuthCheckRequested());
+      });
     });
   }
 
@@ -33,6 +35,8 @@ class _SplashPageState extends State<SplashPage> {
           } else {
             context.go('/home');
           }
+        } else if (state is AuthUnauthenticated) {
+          context.go('/login');
         }
       },
       child: Scaffold(
