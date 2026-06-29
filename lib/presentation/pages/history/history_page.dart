@@ -42,7 +42,7 @@ class _HistoryPageState extends State<HistoryPage> {
                     )),
                 const SizedBox(height: 16),
                 Row(
-                  children: [['all', 'Semua'], ['out', 'Pengeluaran'], ['in', 'Pemasukan']]
+                  children: [['all', 'All'], ['out', 'Expenses'], ['in', 'Income']]
                       .map((t) => Padding(
                             padding: const EdgeInsets.only(right: 8),
                             child: GestureDetector(

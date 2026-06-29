@@ -47,7 +47,7 @@ class _TopUpPageState extends State<TopUpPage> {
       },
       child: Scaffold(
         backgroundColor: AppColors.bg,
-        appBar: AppTopBar(title: 'Isi Saldo', onBack: () => context.go('/home')),
+        appBar: AppTopBar(title: 'Top up saldo', onBack: () => context.go('/home')),
         body: Column(
           children: [
             Expanded(
