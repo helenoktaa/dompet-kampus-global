@@ -28,24 +28,22 @@ class AccountPage extends StatelessWidget {
               children: [
                 // Header
                 Container(
-                  decoration: const BoxDecoration(
-                    gradient: AppColors.primaryGradient,
-                    borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(28),
-                      bottomRight: Radius.circular(28),
-                    ),
-                  ),
+                  color: const Color(0xFF6C5CE7),
                   padding: EdgeInsets.fromLTRB(
-                      20, MediaQuery.of(context).padding.top + 12, 20, 24),
+                      20, MediaQuery.of(context).padding.top + 16, 20, 28),
                   child: Row(
                     children: [
-                      AppAvatar(name: user?.name ?? 'User', size: 60, bg: Colors.white.withValues(alpha: 0.25)),
+                      AppAvatar(
+                        name: user?.name ?? 'User',
+                        size: 60,
+                        bg: Colors.white.withValues(alpha: 0.22),
+                      ),
                       const SizedBox(width: 14),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(user?.name ?? 'Pengguna',
+                            Text(user?.name ?? 'User',
                                 style: const TextStyle(
                                   fontFamily: 'PlusJakartaSans',
                                   fontSize: 19,
@@ -57,28 +55,32 @@ class AccountPage extends StatelessWidget {
                                 style: const TextStyle(
                                   fontFamily: 'PlusJakartaSans',
                                   fontSize: 13,
-                                  color: Colors.white70,
+                                  color: Colors.white60,
                                 )),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.18),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: const Row(
-                          children: [
-                            Icon(Icons.verified_user_outlined, size: 14, color: Colors.white),
-                            SizedBox(width: 5),
-                            Text('Terverifikasi',
-                                style: TextStyle(
-                                  fontFamily: 'PlusJakartaSans',
-                                  fontSize: 11.5,
-                                  fontWeight: FontWeight.w700,
-                                  color: Colors.white,
-                                )),
+                            const SizedBox(height: 6),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withValues(alpha: 0.15),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: const Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(Icons.verified_user_outlined,
+                                      size: 13, color: Colors.white),
+                                  SizedBox(width: 4),
+                                  Text('Verified',
+                                      style: TextStyle(
+                                        fontFamily: 'PlusJakartaSans',
+                                        fontSize: 11.5,
+                                        fontWeight: FontWeight.w700,
+                                        color: Colors.white,
+                                      )),
+                                ],
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -86,22 +88,13 @@ class AccountPage extends StatelessWidget {
                   ),
                 ),
 
-                const SizedBox(height: 16),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Padding(
-                        padding: EdgeInsets.only(left: 4, bottom: 8),
-                        child: Text('Keamanan',
-                            style: TextStyle(
-                              fontFamily: 'PlusJakartaSans',
-                              fontSize: 13,
-                              fontWeight: FontWeight.w700,
-                              color: AppColors.slate400,
-                            )),
-                      ),
+                      // Security section
+                      const _SectionLabel('Security'),
                       Container(
                         decoration: BoxDecoration(
                           color: Colors.white,
@@ -113,25 +106,25 @@ class AccountPage extends StatelessWidget {
                             _Row(
                               icon: Icons.verified_user_outlined,
                               tone: 'green',
-                              title: 'Verifikasi 2 langkah (2FA)',
-                              subtitle: 'Aktif · Email OTP',
+                              title: '2-step verification (2FA)',
+                              subtitle: 'Active · Email OTP',
                               onTap: () => context.go('/setup-2fa'),
-                              right: const AppBadge(label: 'Aktif', tone: 'green'),
+                              right: const AppBadge(label: 'Active', tone: 'green'),
                             ),
                             const Divider(height: 1, indent: 56, color: AppColors.line2),
                             _Row(
                               icon: Icons.lock_outline_rounded,
                               tone: 'blue',
-                              title: 'Ubah PIN keamanan',
-                              subtitle: 'Terakhir diubah 2 bln lalu',
+                              title: 'Change security PIN',
+                              subtitle: 'Last changed 2 months ago',
                               onTap: () {},
                             ),
                             const Divider(height: 1, indent: 56, color: AppColors.line2),
                             _Row(
                               icon: Icons.fingerprint_rounded,
                               tone: 'violet',
-                              title: 'Login biometrik',
-                              subtitle: 'Sidik jari',
+                              title: 'Biometric login',
+                              subtitle: 'Fingerprint',
                               onTap: () {},
                               right: _Toggle(),
                             ),
@@ -139,16 +132,9 @@ class AccountPage extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 18),
-                      const Padding(
-                        padding: EdgeInsets.only(left: 4, bottom: 8),
-                        child: Text('Akun',
-                            style: TextStyle(
-                              fontFamily: 'PlusJakartaSans',
-                              fontSize: 13,
-                              fontWeight: FontWeight.w700,
-                              color: AppColors.slate400,
-                            )),
-                      ),
+
+                      // Account section
+                      const _SectionLabel('Account'),
                       Container(
                         decoration: BoxDecoration(
                           color: Colors.white,
@@ -157,15 +143,32 @@ class AccountPage extends StatelessWidget {
                         ),
                         child: Column(
                           children: [
-                            _Row(icon: Icons.person_outline_rounded, tone: 'blue', title: 'Data pribadi', onTap: () {}),
+                            _Row(
+                              icon: Icons.person_outline_rounded,
+                              tone: 'blue',
+                              title: 'Personal data',
+                              onTap: () {},
+                            ),
                             const Divider(height: 1, indent: 56, color: AppColors.line2),
-                            _Row(icon: Icons.account_balance_outlined, tone: 'green', title: 'Rekening & kartu tersimpan', onTap: () {}),
+                            _Row(
+                              icon: Icons.account_balance_outlined,
+                              tone: 'green',
+                              title: 'Saved accounts & cards',
+                              onTap: () {},
+                            ),
                             const Divider(height: 1, indent: 56, color: AppColors.line2),
-                            _Row(icon: Icons.settings_outlined, tone: 'slate', title: 'Pengaturan aplikasi', onTap: () {}),
+                            _Row(
+                              icon: Icons.settings_outlined,
+                              tone: 'slate',
+                              title: 'App settings',
+                              onTap: () {},
+                            ),
                           ],
                         ),
                       ),
                       const SizedBox(height: 18),
+
+                      // Sign out
                       GestureDetector(
                         onTap: () => context.read<AuthBloc>().add(AuthLogoutRequested()),
                         child: Container(
@@ -181,7 +184,7 @@ class AccountPage extends StatelessWidget {
                             children: [
                               Icon(Icons.logout_rounded, size: 20, color: AppColors.red),
                               SizedBox(width: 9),
-                              Text('Keluar',
+                              Text('Sign out',
                                   style: TextStyle(
                                     fontFamily: 'PlusJakartaSans',
                                     color: AppColors.red,
@@ -193,6 +196,7 @@ class AccountPage extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 16),
+
                       const Center(
                         child: Text('Wallt · v1.0.0',
                             style: TextStyle(
@@ -214,6 +218,27 @@ class AccountPage extends StatelessWidget {
   }
 }
 
+class _SectionLabel extends StatelessWidget {
+  final String text;
+  const _SectionLabel(this.text);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 4, bottom: 8),
+      child: Text(text.toUpperCase(),
+          style: const TextStyle(
+            fontFamily: 'PlusJakartaSans',
+            fontSize: 11,
+            fontWeight: FontWeight.w700,
+            color: AppColors.slate400,
+            letterSpacing: 0.8,
+          )),
+    );
+  }
+}
+
+// _Row, _Toggle — tidak ada perubahan sama sekali
 class _Row extends StatelessWidget {
   final IconData icon;
   final String tone;
