@@ -109,7 +109,7 @@ class PaymentDeeplinkPage extends StatelessWidget {
                     ),
                     child: Column(
                       children: [
-                        const Text('Total Pembayaran',
+                        const Text('Total Payment',
                             style: TextStyle(
                               fontFamily: 'PlusJakartaSans',
                               fontSize: 13,
@@ -141,10 +141,10 @@ class PaymentDeeplinkPage extends StatelessWidget {
                       children: [
                         _DetailRow(label: 'Merchant', value: payload.merchantName),
                         const Divider(height: 1, color: AppColors.line2),
-                        _DetailRow(label: 'Keterangan', value: payload.description),
+                        _DetailRow(label: 'Description', value: payload.description),
                         if (payload.reference != null && payload.reference!.isNotEmpty) ...[
                           const Divider(height: 1, color: AppColors.line2),
-                          _DetailRow(label: 'Referensi', value: payload.reference!),
+                          _DetailRow(label: 'Reference', value: payload.reference!),
                         ],
                       ],
                     ),
@@ -155,7 +155,7 @@ class PaymentDeeplinkPage extends StatelessWidget {
                     padding: EdgeInsets.only(left: 4, bottom: 8),
                     child: Align(
                       alignment: Alignment.centerLeft,
-                      child: Text('Metode pembayaran',
+                      child: Text('Payment method',
                           style: TextStyle(
                             fontFamily: 'PlusJakartaSans',
                             fontSize: 13,
@@ -180,14 +180,14 @@ class PaymentDeeplinkPage extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Dompet Kampus Global',
+                              Text('Wallt',
                                   style: TextStyle(
                                     fontFamily: 'PlusJakartaSans',
                                     fontSize: 14.5,
                                     fontWeight: FontWeight.w800,
                                     color: AppColors.ink,
                                   )),
-                              Text('Saldo · pembayaran instan',
+                              Text('Balance  · instant payment',
                                   style: TextStyle(fontSize: 12.5, color: AppColors.slate400)),
                             ],
                           ),
@@ -209,8 +209,8 @@ class PaymentDeeplinkPage extends StatelessWidget {
                         SizedBox(width: 8),
                         Expanded(
                           child: Text(
-                            'Pembayaran ini akan diverifikasi dengan PIN dan kode 2FA '
-                            'sesuai pengaturan keamanan akun kamu.',
+                            'This payment will be verified with your PIN and 2FA code '
+                            'based on your account security settings.',
                             style: TextStyle(
                               fontFamily: 'PlusJakartaSans',
                               fontSize: 12.5,
@@ -304,7 +304,7 @@ class _ErrorView extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 18),
-              const Text('Link Pembayaran Tidak Valid',
+              const Text('Invalid Payment Link',
                   style: TextStyle(
                     fontFamily: 'PlusJakartaSans',
                     fontSize: 19,
@@ -317,7 +317,7 @@ class _ErrorView extends StatelessWidget {
                   style: const TextStyle(fontSize: 13.5, color: AppColors.slate500, height: 1.5)),
               const SizedBox(height: 28),
               AppButton(
-                label: 'Kembali ke Beranda',
+                label: 'Back to Home',
                 fullWidth: false,
                 onPressed: () => context.go('/home'),
               ),
